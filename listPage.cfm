@@ -44,6 +44,7 @@
                   </div>
                </div>
             </div>
+            <div>
             <div class="bodyConts">
                <div class="bodySnd">
                   <div class="d-flex flex-column  bg-light text-dark me-2 text-center rounded">
@@ -55,6 +56,7 @@
                            <button type="button" id="createContactButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="##exampleModal" >
                            Create Contact
                            </button>
+                           
                            <!-- Modal -->
                            <div class="modal bd-example-modal-lg fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog modal-lg p-1">
@@ -165,6 +167,35 @@
                                           <div class="dummyImg">
                                              <img id="listImage" src="./assets/bodyBook.png" alt="image" class="editImg">
                                           </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <!---Excel Modal--->
+                        <div class="excelModal">
+                           <button type="button" id="uploadTemplate" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="##exampleModalCenter" >
+                              Upload Excel
+                           </button>
+                           <!--- <img src="./assets/excel.png" alt="img" data-toggle="modal" data-target="##exampleModalCenter" id="uploadTemplate"> --->
+                           <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                 <div class="modal-content">
+                                    <div class="modal-body">
+                                       <div class="heading">
+                                          <h4 class="head py-2 text-center">Upload Excel</h4>
+                                       </div>
+                                       <form id="uploadForm" action="" method="post" enctype="multipart/form-data">
+                                          <input type="file" name="excelFile" id="excelFile" required>
+                                          <div class="modal-footer">
+                                             <button type="submit" class="btn btn-primary" id="uploadAddress">Upload</button>
+                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          </div>
+                                       </form>
+                                       <div class="addfile py-2">
+                                          <a href="listExcel.cfm"><button type="button" class="btn btn-primary">Template with Data</button></a>
+                                          <a href="emptyexcel.cfm"><button type="button" class="btn btn-primary" >Plain Template</button></a>
                                        </div>
                                     </div>
                                  </div>

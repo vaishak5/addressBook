@@ -235,30 +235,33 @@ $(document).ready(function () {
 });
 
 /*Plain Template*/
- $(document).ready(function() {
+$(document).ready(function() {
   $("#uploadAddress").click(function(event) {
       event.preventDefault(); 
       var formData = new FormData($("#uploadForm")[0]); 
       $.ajax({
-          url: './component/addressBook.cfc?method=uploadAddress',
+          url: './component/addressBook.cfc?method=uploadExcelDatas',
           method: 'POST',
           data: formData,
           processData: false,
           contentType: false,
-          dataType: "text",
+          dataType: "json", 
           success: function(response) {
-              if (response == "true") {
-                 alert('File Uploaded');
-              } else if(response == "false") {
-                  alert('Upload failed');
+              if (response.length > 0) {
+                  response.forEach(function(item) {
+                      alert(item.message);
+                      window.location.href = "./listPage.cfm";
+                  });
               }
           },
           error: function(xhr, status, error) {
               console.log("An error occurred: " + error);
+              alert("An error occurred: " + error);
           }
       });
   });
 });
+
  
 /*SIGN UP*/
 
