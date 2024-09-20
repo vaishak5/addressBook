@@ -256,7 +256,7 @@ $(document).ready(function() {
           },
           error: function(xhr, status, error) {
               console.log("An error occurred: " + error);
-              alert("An error occurred: " + error);
+              alert(error);
           }
       });
   });

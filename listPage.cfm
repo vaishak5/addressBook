@@ -178,7 +178,6 @@
                            <button type="button" id="uploadTemplate" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="##exampleModalCenter" >
                               Upload Excel
                            </button>
-                           <!--- <img src="./assets/excel.png" alt="img" data-toggle="modal" data-target="##exampleModalCenter" id="uploadTemplate"> --->
                            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                               <div class="modal-dialog modal-dialog-centered" role="document">
                                  <div class="modal-content">
@@ -190,7 +189,7 @@
                                           <input type="file" name="excelFile" id="excelFile" required>
                                           <div class="modal-footer">
                                              <button type="submit" class="btn btn-primary" id="uploadAddress">Upload</button>
-                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                             <button type="button" class="btn btn-secondary" data-dismiss="modal" id="formClose" onclick="myFunction()">Close</button>
                                           </div>
                                        </form>
                                        <div class="addfile py-2">
