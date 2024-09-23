@@ -263,13 +263,12 @@
         <cfset var saveSSO = {} >
         <cfset var response = "">
         <cfset ssoLogin = result.ssoLogin(arguments.emailID, arguments.name, arguments.image) ><!--- Check if user already exists in Google login --->
-        
         <cfif ssoLogin.recordCount>
             <cfset session.login = true>             
             <cfset session.sso = true>
             <cfset session.fullName = ssoLogin.fullName>
             <cfset session.imgProfile = ssoLogin.imgFile>
-            <cfset session.userId = ssoLogin.userId>
+            <cfset session.userID = ssoLogin.userId>
             <cfset response = true>
         <cfelse>
             <cfset saveSSO = result.saveSSO(arguments.emailID, arguments.name, arguments.image)> <!--- Save user in SSO --->
@@ -280,7 +279,7 @@
                     <cfset session.sso = true> 
                     <cfset session.fullName = ssoLogin.fullName>
                     <cfset session.imgProfile = ssoLogin.imgFile>
-                    <cfset session.userId = ssoLogin.userId>
+                    <cfset session.userID = ssoLogin.userId>
                 </cfif>
                 <cfset response = true>
             </cfif>
@@ -313,8 +312,8 @@
             ) 
         </cfquery>
         <cfreturn true>
-    </cffunction>
-
+    </cffunction> 
+    
     <!---Upload Excel--->
     <cffunction name="uploadExcelDatas" access="remote" returnformat="JSON">
     <cfargument name="excelFile" type="any" required="true">
@@ -325,7 +324,6 @@
     <cfset local.uploadedFile = cffile.serverFile>
     <cfset local.filePath = "#local.excelUpload##local.uploadedFile#">
     <cfspreadsheet action="read" src="#local.filePath#" query="local.excelValues" sheet="1">
-
     <cfset local.mapping = {
         title: "col_1",
         firstName: "col_2",
@@ -346,6 +344,7 @@
         <cfquery name='checkExcelEmail' datasource="DESKTOP-8VHOQ47">
             SELECT emailID FROM contactDetails
             WHERE emailID = <cfqueryparam value="#local.email#" cfsqltype="cf_sql_varchar">
+            and userId=<cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
         </cfquery>
         <cfset local.recordData = {
             title: local.excelValues[local.mapping.title],
@@ -374,6 +373,7 @@
                     phoneNumber = <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
                     pincode = <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">
                 WHERE emailID = <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">
+                and userId=<cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
             </cfquery>
             <cfset local.totalUpdated = local.totalUpdated + 1>
         <cfelse>
@@ -391,13 +391,13 @@
                     <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
                     <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">,
                     <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
+                    <cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
                 )
             </cfquery>
             <cfset local.totalInserted = local.totalInserted + 1>
         </cfif>
     </cfloop>
-    <!--- Check if any records were inserted or updated --->
+    <!--- Check whether the records are inserted or updated --->
     <cfif local.totalInserted gt 0 AND local.totalUpdated gt 0>
         <cfset arrayAppend(local.response, {"success": true, "message": "Excel Updated and Inserted."})>
     <cfelseif local.totalInserted gt 0>

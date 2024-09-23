@@ -435,7 +435,7 @@ $(document).ready(function () {
 		signIn();
 	});
 	let params = {};
-	params={"http://127.0.0.1:8500/ColdFusion_Tasks/Address_Book/":"listPage.cfm"};
+	params={"http://127.0.0.1:8500/ColdFusion_Tasks/addressBook/":"listPage.cfm"};
 	let regex = /([^&=]+)=([^&]*)/g,m;
   while ((m = regex.exec(location.href)) !== null) {
 		params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
@@ -490,7 +490,7 @@ function signIn() {
 		.attr('action', oauth2Endpoint);
 	let params = {
 		"client_id": "135401033169-7f5pu8kp94335rgg9hk1e1pcg2deaj6p.apps.googleusercontent.com",
-		"redirect_uri": "http://127.0.0.1:8500/ColdFusion_Tasks/Address_Book/listPage.cfm",
+		"redirect_uri": "http://127.0.0.1:8500/ColdFusion_Tasks/addressBook/listPage.cfm",
 		"response_type": "token",
 		"scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
 		"include_granted_scopes": "true",
