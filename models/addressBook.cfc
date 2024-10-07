@@ -243,16 +243,6 @@
         <cfset serializedContact = serializeJSON(local.result)>
         <cfreturn serializedContact>
     </cffunction>
-    <!---Log out--->
-    <cffunction  name="doLogout" returntype="any" access="remote">
-        <cfset session.login=false>
-        <cfset session.fullName = "">
-        <cfset session.imgProfile = "">
-        <cfset session.userId = "">
-        <cfset session.sso=false>
-        <cflocation url="../loginPage.cfm" addtoken="false">
-    </cffunction>
-
     <!---SSO--->
     <cffunction name="googleLogin" access="remote" returnFormat="PLAIN">
         <cfargument name="emailID" required="true">
@@ -316,105 +306,97 @@
     
     <!---Upload Excel--->
     <cffunction name="uploadExcelDatas" access="remote" returnformat="JSON">
-    <cfargument name="excelFile" type="any" required="true">
-    <cfset var local = {}>
-    <cfset local.response = []>
-    <cfset local.excelUpload = expandPath("../Uploads/")>
-    <cffile action="upload" fileField="excelFile" destination="#local.excelUpload#" nameConflict="makeunique">
-    <cfset local.uploadedFile = cffile.serverFile>
-    <cfset local.filePath = "#local.excelUpload##local.uploadedFile#">
-    <cfspreadsheet action="read" src="#local.filePath#" query="local.excelValues" sheet="1">
-    <cfset local.mapping = {
-        title: "col_1",
-        firstName: "col_2",
-        lastName: "col_3",   
-        gender: "col_4",
-        dob: "col_5",
-        profilePic: "col_6",
-        addressField: "col_7",
-        street: "col_8",
-        phoneNumber: "col_10",
-        emailID: "col_9",
-        pincode: "col_11"
-    }>
-    <cfset local.totalInserted = 0>
-    <cfset local.totalUpdated = 0>
-    <cfloop query="local.excelValues" startRow=2>
-        <cfset local.email = local.excelValues[local.mapping.emailID]>
-        <cfquery name='checkExcelEmail' datasource="DESKTOP-8VHOQ47">
-            SELECT emailID FROM contactDetails
-            WHERE emailID = <cfqueryparam value="#local.email#" cfsqltype="cf_sql_varchar">
-            and userId=<cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
-        </cfquery>
-        <cfset local.recordData = {
-            title: local.excelValues[local.mapping.title],
-            firstName: local.excelValues[local.mapping.firstName],
-            lastName: local.excelValues[local.mapping.lastName], 
-            gender: local.excelValues[local.mapping.gender],
-            dob: local.excelValues[local.mapping.dob],
-            profilePic: local.excelValues[local.mapping.profilePic],
-            addressField: local.excelValues[local.mapping.addressField],
-            street: local.excelValues[local.mapping.street],
-            phoneNumber: local.excelValues[local.mapping.phoneNumber],
-            emailID: local.excelValues[local.mapping.emailID],
-            pincode: local.excelValues[local.mapping.pincode]
+        <cfargument name="excelFile" type="any" required="true">
+        <cfset var local = {}>
+        <cfset local.response = []>
+        <cfset local.excelUpload = expandPath("../Uploads/")>
+        <cffile action="upload" fileField="excelFile" destination="#local.excelUpload#" nameConflict="makeunique">
+        <cfset local.uploadedFile = cffile.serverFile>
+        <cfset local.filePath = "#local.excelUpload##local.uploadedFile#">
+        <cfspreadsheet action="read" src="#local.filePath#" query="local.excelValues" sheet="1">
+        <cfset local.mapping = {
+            title: "col_1",
+            firstName: "col_2",
+            lastName: "col_3",   
+            gender: "col_4",
+            dob: "col_5",
+            profilePic: "col_6",
+            addressField: "col_7",
+            street: "col_8",
+            phoneNumber: "col_10",
+            emailID: "col_9",
+            pincode: "col_11"
         }>
-        <cfif checkExcelEmail.recordCount gt 0>
-            <cfquery name="UpdateExcel" datasource="DESKTOP-8VHOQ47">
-                UPDATE contactDetails 
-                SET 
-                    title = <cfqueryparam value="#local.recordData.title#" cfsqltype="cf_sql_varchar">,
-                    firstName = <cfqueryparam value="#local.recordData.firstName#" cfsqltype="cf_sql_varchar">,
-                    larstName = <cfqueryparam value="#local.recordData.lastName#" cfsqltype="cf_sql_varchar">,
-                    gender = <cfqueryparam value="#local.recordData.gender#" cfsqltype="cf_sql_varchar">,
-                    dob = <cfqueryparam value="#local.recordData.dob#" cfsqltype="cf_sql_varchar">,
-                    addressField = <cfqueryparam value="#local.recordData.addressField#" cfsqltype="cf_sql_varchar">,
-                    street = <cfqueryparam value="#local.recordData.street#" cfsqltype="cf_sql_varchar">,
-                    phoneNumber = <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
-                    pincode = <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">
-                WHERE emailID = <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">
+        <cfset local.totalInserted = 0>
+        <cfset local.totalUpdated = 0>
+        <cfloop query="local.excelValues" startRow=2>
+            <cfset local.email = local.excelValues[local.mapping.emailID]>
+            <cfquery name='checkExcelEmail' datasource="DESKTOP-8VHOQ47">
+                SELECT emailID FROM contactDetails
+                WHERE emailID = <cfqueryparam value="#local.email#" cfsqltype="cf_sql_varchar">
                 and userId=<cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
             </cfquery>
-            <cfset local.totalUpdated = local.totalUpdated + 1>
-        <cfelse>
-            <cfquery name="insertQuery" datasource="DESKTOP-8VHOQ47">
-                INSERT INTO contactDetails (title, firstName, larstName, gender, dob, profilePic, addressField, street, phoneNumber, emailID, pincode, userId)
-                VALUES (
-                    <cfqueryparam value="#local.recordData.title#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.firstName#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.lastName#" cfsqltype="cf_sql_varchar">,  
-                    <cfqueryparam value="#local.recordData.gender#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.dob#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.profilePic#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.addressField#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.street#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">,
-                    <cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
-                )
-            </cfquery>
-            <cfset local.totalInserted = local.totalInserted + 1>
+            <cfset local.recordData = {
+                title: local.excelValues[local.mapping.title],
+                firstName: local.excelValues[local.mapping.firstName],
+                lastName: local.excelValues[local.mapping.lastName], 
+                gender: local.excelValues[local.mapping.gender],
+                dob: local.excelValues[local.mapping.dob],
+                profilePic: local.excelValues[local.mapping.profilePic],
+                addressField: local.excelValues[local.mapping.addressField],
+                street: local.excelValues[local.mapping.street],
+                phoneNumber: local.excelValues[local.mapping.phoneNumber],
+                emailID: local.excelValues[local.mapping.emailID],
+                pincode: local.excelValues[local.mapping.pincode]
+            }>
+            <cfif checkExcelEmail.recordCount gt 0>
+                <cfquery name="UpdateExcel" datasource="DESKTOP-8VHOQ47">
+                    UPDATE contactDetails 
+                    SET 
+                        title = <cfqueryparam value="#local.recordData.title#" cfsqltype="cf_sql_varchar">,
+                        firstName = <cfqueryparam value="#local.recordData.firstName#" cfsqltype="cf_sql_varchar">,
+                        larstName = <cfqueryparam value="#local.recordData.lastName#" cfsqltype="cf_sql_varchar">,
+                        gender = <cfqueryparam value="#local.recordData.gender#" cfsqltype="cf_sql_varchar">,
+                        dob = <cfqueryparam value="#local.recordData.dob#" cfsqltype="cf_sql_varchar">,
+                        addressField = <cfqueryparam value="#local.recordData.addressField#" cfsqltype="cf_sql_varchar">,
+                        street = <cfqueryparam value="#local.recordData.street#" cfsqltype="cf_sql_varchar">,
+                        phoneNumber = <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
+                        pincode = <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">
+                    WHERE emailID = <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">
+                    and userId=<cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
+                </cfquery>
+                <cfset local.totalUpdated = local.totalUpdated + 1>
+            <cfelse>
+                <cfquery name="insertQuery" datasource="DESKTOP-8VHOQ47">
+                    INSERT INTO contactDetails (title, firstName, larstName, gender, dob, profilePic, addressField, street, phoneNumber, emailID, pincode, userId)
+                    VALUES (
+                        <cfqueryparam value="#local.recordData.title#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.firstName#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.lastName#" cfsqltype="cf_sql_varchar">,  
+                        <cfqueryparam value="#local.recordData.gender#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.dob#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.profilePic#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.addressField#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.street#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
+                    )
+                </cfquery>
+                <cfset local.totalInserted = local.totalInserted + 1>
+            </cfif>
+        </cfloop>
+        <!--- Check whether the records are inserted or updated --->
+        <cfif local.totalInserted gt 0 AND local.totalUpdated gt 0>
+            <cfset arrayAppend(local.response, {"success": true, "message": "Excel Updated and Inserted."})>
+        <cfelseif local.totalInserted gt 0>
+            <cfset arrayAppend(local.response, {"success": true, "message": "Excel Uploaded Successfully with new records."})>
+        <cfelseif local.totalUpdated gt 0>
+            <cfset arrayAppend(local.response, {"success": true, "message":  "Already Excel Uploaded  so update the records."})>
         </cfif>
-    </cfloop>
-    <!--- Check whether the records are inserted or updated --->
-    <cfif local.totalInserted gt 0 AND local.totalUpdated gt 0>
-        <cfset arrayAppend(local.response, {"success": true, "message": "Excel Updated and Inserted."})>
-    <cfelseif local.totalInserted gt 0>
-        <cfset arrayAppend(local.response, {"success": true, "message": "Excel Uploaded Successfully with new records."})>
-    <cfelseif local.totalUpdated gt 0>
-        <cfset arrayAppend(local.response, {"success": true, "message":  "Already Excel Uploaded  so update the records."})>
-    </cfif>
-    <cfreturn serializeJSON(local.response)>
-</cffunction>
+        <cfreturn serializeJSON(local.response)>
+    </cffunction>
 </cfcomponent>
-
-
-
-
-
-
-
-
 
 

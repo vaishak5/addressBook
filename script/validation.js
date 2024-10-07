@@ -16,7 +16,7 @@ $(document).ready(function () {
     if (signValidation()) {
       $.ajax({
         type: "POST",
-        url: "./component/addressBook.cfc?method=signUpload",
+        url: "../models/addressBook.cfc?method=signUpload",
         processData: false,
         contentType: false,
         datatype: "text",
@@ -45,30 +45,31 @@ $(document).ready(function () {
   $("#loginSubmit").click(function () {
     var emailId = $("#email").val().trim();
     var password = $("#password").val().trim();
-    if (emailId == "" || password == "") {
-      alert("Please fill the field!!");
-      return;
+    if (emailId === "" || password === "") {
+        alert("Please fill the field!!");
+        return;
     } else {
-      $.ajax({
-        type: "POST",
-        url: "./component/addressBook.cfc?method=checkLogin",
-        datatype: "text",
-        data: { emailId: emailId, password: password },
-        success: function (response) {
-          if (response === "true") {
-            alert("Login Successfully!!!");
-            window.location.href = "./listPage.cfm";
-          } else {
-            alert("User Not Found!!!");
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error(error);
-          alert("An error occurred while submitting the form. Please try again.");
-        },
-      });
+        $.ajax({
+            type: "POST",
+            url: "../models/addressBook.cfc?method=checkLogin", 
+            dataType: "text",
+            data: { emailId: emailId, password: password },
+            success: function (response) {
+                if (response === "true") {
+                    alert("Login Successfully!!!");
+                    window.location.href = "./listPage.cfm";
+                } else {
+                    alert("User Not Found!!!");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+                alert("An error occurred while submitting the form. Please try again.");
+            },
+        });
     }
   });
+
 
   $("#createContactButton").click(function () {
     $("#myForm")[0].reset();
@@ -110,7 +111,7 @@ $(document).ready(function () {
     if (formValidation()) {
       $.ajax({
         type: "POST",
-        url: "./component/addressBook.cfc?method=dataUpload",
+        url: "../models/addressBook.cfc?method=dataUpload",
         contentType: false,
         processData: false,
         dataType: "text",
@@ -140,7 +141,7 @@ $(document).ready(function () {
     if (confirm("Are you sure you want to delete this record?")) {
       $.ajax({
         type: "POST",
-        url: "./component/addressBook.cfc?method=deleteDatas",
+        url: "../models/addressBook.cfc?method=deleteDatas",
         dataType: "text",
         data: { contactId: contactId },
         success: function (response) {
@@ -160,7 +161,7 @@ $(document).ready(function () {
     var contactId = $(this).attr("data-id");
     $.ajax({
       type: "POST",
-      url: "./component/addressBook.cfc?method=viewDatas",
+      url: "../models/addressBook.cfc?method=viewDatas",
       dataType: "text",
       data: {
         contactId: contactId,
@@ -175,7 +176,7 @@ $(document).ready(function () {
         $("#phoneNumberSecond").html(viewDetails.PHONENUMBER);
         $("#emailid").html(viewDetails.EMAIL);
         $("#pincodeSecond").html(viewDetails.PINCODE);
-        $("#myImage").attr("src", "./assets/" + viewDetails.PROFILEPIC);
+        $("#myImage").attr("src", "../assets/" + viewDetails.PROFILEPIC);
       },
       error: function (xhr, status, error) {
         console.error("Error:", status, error);
@@ -190,14 +191,14 @@ $(document).ready(function () {
     if (contactId > 0) {
       $.ajax({
         type: "POST",
-        url: "./component/addressBook.cfc?method=selectDatas",
+        url: "../models/addressBook.cfc?method=selectDatas",
         dataType: "text",
         data: {
           contactId: contactId,
         },
         success: function (response) {
           console.log(response);
-          $("#profile").attr("value", "./assets/" + response.profilePic)[0].files[0];
+          $("#profile").attr("value", "../assets/" + response.profilePic)[0].files[0];
           var selectDetails = JSON.parse(response);
           var date = new Date(selectDetails.dob);
           var dateSet = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
@@ -215,7 +216,7 @@ $(document).ready(function () {
           $("#phoneNumber").val(selectDetails.phoneNumber);
           $("#email").val(selectDetails.email);
           $("#pincode").val(selectDetails.pincode);
-          $(".editImg").attr("src", "./assets/" + selectDetails.myFile);
+          $(".editImg").attr("src", "../assets/" + selectDetails.myFile);
         },
         error: function (xhr, status, error) {
           console.error("Error:", status, error);
@@ -240,7 +241,7 @@ $(document).ready(function() {
       event.preventDefault(); 
       var formData = new FormData($("#uploadForm")[0]); 
       $.ajax({
-          url: './component/addressBook.cfc?method=uploadExcelDatas',
+          url: './models/addressBook.cfc?method=uploadExcelDatas',
           method: 'POST',
           data: formData,
           processData: false,
@@ -262,9 +263,7 @@ $(document).ready(function() {
   });
 });
 
- 
 /*SIGN UP*/
-
 function signValidation() {
   var fullName = $("#fullName").val().trim();
   var file = $("#myfile").val().trim();
@@ -435,7 +434,7 @@ $(document).ready(function () {
 		signIn();
 	});
 	let params = {};
-	params={"http://127.0.0.1:8500/ColdFusion_Tasks/addressBook/":"listPage.cfm"};
+	params={"http://127.0.0.1:8500/ColdFusion_Tasks/addressBook/views":"listPage.cfm"};
 	let regex = /([^&=]+)=([^&]*)/g,m;
   while ((m = regex.exec(location.href)) !== null) {
 		params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
@@ -460,7 +459,7 @@ $(document).ready(function () {
 				var image = data.picture;
        
         $.ajax({
-					url: './component/addressBook.cfc?method=googleLogin',
+					url: '../models/addressBook.cfc?method=googleLogin',
 					type: 'post',
           dataType: "text",
 					data: {
@@ -490,7 +489,7 @@ function signIn() {
 		.attr('action', oauth2Endpoint);
 	let params = {
 		"client_id": "135401033169-7f5pu8kp94335rgg9hk1e1pcg2deaj6p.apps.googleusercontent.com",
-		"redirect_uri": "http://127.0.0.1:8500/ColdFusion_Tasks/addressBook/listPage.cfm",
+		"redirect_uri": "http://127.0.0.1:8500/ColdFusion_Tasks/addressBook/views/listPage.cfm",
 		"response_type": "token",
 		"scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
 		"include_granted_scopes": "true",
@@ -505,4 +504,4 @@ function signIn() {
 	});
 	$form.appendTo('body').submit();
 }
-/*Plain Template*/
+

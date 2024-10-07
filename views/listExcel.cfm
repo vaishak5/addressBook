@@ -27,7 +27,7 @@
             <cfset querySetCell(excelSet, "PhoneNumber", local.phone)>
             <cfset querySetCell(excelSet, "Pincode", local.pincode)>
         </cfloop>
-        <cfset excelDown=expandPath("./assets/contacts.xlsx")>
+        <cfset excelDown=expandPath("../assets/contacts.xlsx")>
         <cfspreadsheet action="write" filename="#excelDown#" query="excelSet" sheetname="contacts">
         <cfheader name="Content-Disposition" value="attachment; filename=contacts.xlsx">
         <cfcontent type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" file="#excelDown#" deleteFile="true">

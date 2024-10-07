@@ -39,7 +39,7 @@
                             <cfloop array="#contacts#" index="contact">
                                  <cfif session.userID EQ contact.getuserId()>
                                     <tr class="tableRow">
-                                        <td><img src="./assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile" width="20" height="20"></td>
+                                        <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile" width="20" height="20"></td>
                                         <td class="">#contact.getfirstName()# #contact.getlarstName()#</td>
                                         <td class="">#contact.getemailID()#</td>
                                         <td class="">#contact.getphoneNumber()#</td>

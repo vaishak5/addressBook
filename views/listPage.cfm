@@ -5,42 +5,42 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>List Page</title>
-      <link rel="stylesheet" href="./style/style.css">
-      <link rel="stylesheet" href="./style/jquery-ui.css">
-      <link rel="stylesheet" href="./style/bootstrap.min.css">
-      <script src="./script/sourceFirst.js"></script>
-      <script src="./script/sourceSecond.js"></script>
-      <script src="./script/sourceThird.js"></script>
-      <script src="./script/jquery.min.js"></script>
-      <script src="./script/jquery-ui.min.js"></script>
-      <script src="./script/validation.js"></script>
-      <script src="./script/modalJS.js"></script>
-      <script src="./script/reset.js"></script>
+      <link rel="stylesheet" href="../style/style.css">
+      <link rel="stylesheet" href="../style/jquery-ui.css">
+      <link rel="stylesheet" href="../style/bootstrap.min.css">
+      <script src="../script/sourceFirst.js"></script>
+      <script src="../script/sourceSecond.js"></script>
+      <script src="../script/sourceThird.js"></script>
+      <script src="../script/jquery.min.js"></script>
+      <script src="../script/jquery-ui.min.js"></script>
+      <script src="../script/validation.js"></script>
+      <script src="../script/modalJS.js"></script>
+      <script src="../script/reset.js"></script>
    </head>
    <body>
       <cfif session.sso>
          <cfset variables.image = session.imgProfile>
       <cfelse>
-         <cfset variables.image = "./assets/" & session.imgFile>
+         <cfset variables.image = "../assets/" & session.imgFile>
       </cfif>
       <cfif session.login>
          <div class="navbar px-5">
             <div class="navbarFt">
-               <img class="addressLogo" src="./assets/bodyBook.png" alt="img" width="30" height="30">
+               <img class="addressLogo" src="../assets/bodyBook.png" alt="img" width="30" height="30">
                <h3 class="mb-0">ADDRESS BOOK</h3>
             </div>
             <div class="navbarSndSet">
-               <img class="loginLogo" src="./assets/logout.png" alt="img" width="20" height="20">
-               <a href="./component/addressBook.cfc?method=doLogout">Logout</a>
+               <img class="loginLogo" src="../assets/logout.png" alt="img" width="20" height="20">
+              <a href="../controllers/nonsql.cfc?method=doLogout">Logout</a> 
             </div>
          </div>
          <div class="mainSett">
             <div class="body">
                <div class="bodyFt">
                   <div class="downloadSet">
-                     <a href="listPdf.cfm"><img src="./assets/pdf.png" alt="img"></a>
-                     <a href="listExcel.cfm"><img src="./assets/excel.png" alt="img"></a>
-                     <img src="./assets/print.png" alt="img" id="printButton">
+                     <a href="listPdf.cfm"><img src="../assets/pdf.png" alt="img"></a>
+                     <a href="listExcel.cfm"><img src="../assets/excel.png" alt="img"></a>
+                     <img src="../assets/print.png" alt="img" id="printButton">
                   </div>
                </div>
             </div>
@@ -77,7 +77,7 @@
                                                    <!---First Input--->
                                                    <div class="inputSet d-flex gap-5 py-2">
                                                       <div class="titleSet d-flex flex-column">
-                                                      <input type="hidden" id="hiddenContactId" value="0">
+                                                         <input type="hidden" id="hiddenContactId" value="0">
                                                          <label for="title" class="title col-3">Title*</label>
                                                          <select name="title" id="titles" required>
                                                             <option value selected="selected"></option>
@@ -165,7 +165,7 @@
                                        </div>
                                        <div class="secondMain col-4">
                                           <div class="dummyImg">
-                                             <img id="listImage" src="./assets/bodyBook.png" alt="image" class="editImg">
+                                             <img id="listImage" src="../assets/bodyBook.png" alt="image" class="editImg">
                                           </div>
                                        </div>
                                     </div>
@@ -189,7 +189,7 @@
                                           <input type="file" name="excelFile" id="excelFile" required>
                                           <div class="modal-footer">
                                              <button type="submit" class="btn btn-primary" id="uploadAddress">Upload</button>
-                                             <button type="button" class="btn btn-secondary" data-dismiss="modal" id="formClose" onclick="myFunction()">Close</button>
+                                             <button type="button" class="btn btn-secondary" id="formClose" data-bs-dismiss="modal" aria-bs-label="Close" onclick="myFunction()">Close</button>
                                           </div>
                                        </form>
                                        <div class="addfile py-2">
@@ -232,13 +232,12 @@
                               </tr>
                            </thead>
                            <tbody>
-                              <cfset variables.contacts = EntityLoad("ORM_Create_Contact")>
+                             <cfset variables.contacts = EntityLoad("ORM_Create_Contact")>
                               <cfloop array="#variables.contacts#" index="contact">
-                              
                                  <cfset variables.contactId = contact.getcontactId()>
                                  <cfif session.userID EQ contact.getuserId()>
                                     <tr class="#variables.contactId#">
-                                       <td><img src="./assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile"></td>
+                                       <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile"></td>
                                        <td class="nameList">#contact.getfirstName()# #contact.getlarstName()#</td>
                                        <td class="emailList">#contact.getemailID()#</td>
                                        <td class="phoneList">#contact.getphoneNumber()#</td>
