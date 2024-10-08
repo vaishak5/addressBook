@@ -1,0 +1,349 @@
+*{
+    margin:0;
+    padding:0;
+}
+body{
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background-color: #d8e4f0;
+    
+}
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    background-color: #337ab7;
+    padding: 13px;
+}
+.navbarFt,.navbarSnd{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.navbarSnd a{
+    color:white;
+    text-decoration: none;
+
+}
+.navbarSnd a:hover{
+    text-decoration:underline;
+}
+.navbarFt h2{
+    cursor:default;
+}
+h2{
+    color:white;
+}
+.mainSection{
+    display: flex;
+    justify-content: center;
+    padding: 50px;
+    
+}
+.main{
+    background-color: #d8e4f0;
+    height:91vh;
+}
+    
+
+.inputs{
+    border: none;
+    border-bottom: 1px solid #606060;
+    width: 300px;
+    outline: none;
+    padding: 15px;
+}
+.inputsFile{
+    border: none;
+    border-bottom: 1px solid #606060;
+    outline: none;
+    padding-bottom: 15px;
+    padding-left: 15px;
+}
+.fileSet{
+    padding-left: 15px;
+    padding-top:5px;
+}
+h1{
+    text-align: center;
+    color: #337ab7;
+}
+.inputContz{
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+.mainBodyFt{
+    border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    padding: 125px 20px 125px 20px;
+    background-color: #337ab7;
+    width: 12%;
+}
+
+.loginBtn a{
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    border: 1px solid #2874F0;
+    padding: 10px;
+    border-radius: 10px;
+    color: #337ab7;
+}
+.singinTxt{
+    text-align: center;
+}
+.anotherAccess{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.registerCont{
+    display: flex;
+    justify-content: center;
+    gap:10px;
+}
+.loginBtn{
+    margin-top:20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+.mainBodySndCont{
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.registerCont a{
+    color: #2874F0;
+    text-decoration: none;
+}
+.registerCont a:hover{
+    text-decoration: underline;
+}
+.mainBodySnd{
+    background-color: white;
+    padding: 20px;
+}
+
+.submitBtn{
+    padding: 10px;
+    margin: 10px 0px;
+    border-radius: 10px;
+    border: 1px solid #2874F0;
+    color: #337ab7;
+    background-color: #d8e4f0;
+    cursor:pointer;
+    
+}
+.mainBodySndd{
+    background-color: white;
+    padding: 10px;
+}
+.mainSectionn{
+    display: flex;
+    justify-content: center;
+    padding: 28px;
+    
+}
+.error{
+    height:5px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.inputConts{
+    display:flex;
+    flex-direction: column;
+}
+.submitBtnn{
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #2874F0;
+    color: #337ab7;
+    background-color: #d8e4f0;
+    cursor:pointer;
+    width:50%;
+    
+}
+.navbarSndSet{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-right:50px;
+}
+.navbarSndSet a{
+    color:white;
+    text-decoration: none;
+    
+}
+.bodyFt{
+    display: flex;
+    justify-content: flex-end;
+    border: 1px solid black;
+    margin-top: 20px;
+    width: 80%;
+    background-color: white;
+    border-radius: 10px;
+    border-style: none;
+}
+.downloadSet{
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+}
+.downloadSet img, .fb, .google{
+    cursor:pointer;
+}
+.body{
+    display: flex;
+    justify-content: center;
+}
+.mainSet{
+    background-color: #d8e4f0;
+    height:91vh;
+}
+.bodyConts{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 75vh;
+}
+.bodySnd{
+    width: 20%;
+}
+.bodyThd{
+    width: 80%;
+}
+.navbarFt h3{
+    color:white;
+    cursor: default;
+}
+.heading{
+    padding-top: 10px;
+}
+.heading h3{
+    color:#338fc5;
+}
+.creating{
+    background-color: #add8e6;
+}
+.personal{
+    border-bottom:2px solid #338fc5;
+}
+.inputFields{
+    font-size:14px;
+    color: #338fc5;
+    font-weight:bold;
+}
+.firstName input[type=text], .lastName input[type=text],.lastName input[type=email],.dateSet input[type=date]{
+    border-right: none;
+    border-left: none;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+    outline: none;
+    height: 30px;
+}
+
+.footer{
+    border: none;
+    display: flex;
+    justify-content: flex-start;
+    padding: 0;
+}
+.save{
+    margin: 0px;
+}
+.nextHeading h5{
+    color: #338fc5;
+    
+}
+#profile{
+    color:black;
+}
+.secondMain{
+    background-color: #aac4dd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fullBody{
+    background-color: #aac4dd;
+}
+.profilePhoto{
+    width: 35px;
+    border-radius: 50%;
+}
+#closeBtn{
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor: pointer;
+}
+.displayItems{
+    color: #338fc5;
+    font-weight: 500;
+    font-size: 16px;
+}
+.imgSetContss{
+    background-color: #aac4dd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#myImage{
+    width: 100px;
+    border-radius: 50%;
+}
+.mainSett{
+    background-color: #d8e4f0;
+    height:92vh;
+}
+.editImg{
+    border-radius: 50%;
+    width: 120px;
+    height: 123px;
+}
+#passwordError{
+    width:300px;
+    height:auto;
+}
+.itemsAlign{
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+}
+.rowAlign{
+    display:flex;
+    justify-content: space-between;
+}
+.itemsAlign input[type=text],input[type=date]{
+    border-right: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+    outline: none;
+    height: 30px;
+}
+.rowAlign2{
+    display:flex;
+    gap:50px;
+}
+.personal{
+    color: #338fc5;
+}
+.rolesSet option:checked {
+    background-color: #d3d3d3; 
+    color: #000; 
+}
+.emailCont{
+    border-right: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+    outline: none;
+    height: 30px;
+}
