@@ -34,25 +34,7 @@
             <cfreturn emailExists>
         </cfif>
     </cffunction> 
-
-    <!---For signUp(emailcheck)--->
-    <cffunction  name="emailFind" access="remote" returnFormat="plain">
-        <cfargument name="emailId" required="true">
-        <cfquery name="checkingEmail" datasource="DESKTOP-8VHOQ47">
-            SELECT COUNT(*) AS emailcheckCount
-            FROM (
-                SELECT emailId FROM register WHERE emailId = <cfqueryparam value="#arguments.emailId#" cfsqltype="CF_SQL_VARCHAR">
-                UNION ALL
-                SELECT emailID FROM contactDetails WHERE emailID = <cfqueryparam value="#arguments.emailId#" cfsqltype="CF_SQL_VARCHAR">
-            ) AS CombinedResults
-        </cfquery>
-        <cfif checkingEmail.emailcheckCount>
-            <cfreturn true>
-        <cfelse>
-            <cfreturn false>
-        </cfif>
-    </cffunction>
-
+    
     <!---Sign Up--->
     <cffunction name="signUpload" access="remote" returnFormat="plain">
         <cfargument  name="fullName" required="true">
@@ -65,8 +47,13 @@
         <cffile action = "upload"  filefield="myfile" destination="#local.imgPath#" nameconflict="makeunique" >
         <cfset local.img =  cffile.serverFile>
         <cfset local.hashedPassword = Hash(arguments.password, "SHA-256")>
-        <cfset var emailUnique = emailFind(arguments.emailId)>
-        <cfif not emailUnique>
+       <cfquery name="checEmail" datasource="DESKTOP-8VHOQ47">
+            select emailId from register
+            WHERE emailId = <cfqueryparam value="#arguments.emailId#" cfsqltype="CF_SQL_VARCHAR">
+       </cfquery>
+       <cfif checEmail.RecordCount>
+            <cfreturn "false">
+        <cfelse>
             <cfquery name="insertValues"  datasource="DESKTOP-8VHOQ47">
                 INSERT INTO register (fullName,  emailId, password, imgFile, userName)
                 VALUES (
@@ -78,8 +65,6 @@
                 )
             </cfquery>  
             <cfreturn "true">
-        <cfelse>
-            <cfreturn "false">
         </cfif>
     </cffunction> 
 
@@ -119,6 +104,7 @@
         <cfargument name="phoneNumber" required="true">
         <cfargument name="email" required="true">
         <cfargument name="pincode" required="true">
+        <cfargument name="roles"> 
         <cfset var emailUnique = isEmailUnique(arguments.email,arguments.hiddenContactId)>
         <cfif arguments.hiddenContactId GT 0>
             <!---Update records(edit set)--->
@@ -141,9 +127,28 @@
                     profilePic=<cfqueryparam value="#local.img#" cfsqltype="CF_SQL_VARCHAR">
                     WHERE contactId = <cfqueryparam value="#arguments.hiddenContactId#" cfsqltype="cf_sql_integer">
                 </cfquery>
+                 <!--- Update roles directly --->
+                <cfset local.rolesArray = listToArray(arguments.roles)>
+                <cfquery name="checkRoles" datasource="DESKTOP-8VHOQ47">
+                    SELECT roles 
+                    FROM rolesTable
+                    WHERE contactId = <cfqueryparam value="#arguments.hiddenContactId#" cfsqltype="cf_sql_integer"> 
+                </cfquery>
+                <cfquery name="deleteroles" datasource="DESKTOP-8VHOQ47">
+                    delete from rolesTable WHERE contactId = <cfqueryparam value="#arguments.hiddenContactId#" cfsqltype="cf_sql_integer">
+                </cfquery>
+                <cfloop array="#local.rolesArray#" index="roles">
+                    <cfquery name="addroles" datasource="DESKTOP-8VHOQ47">
+                        INSERT INTO rolesTable (contactId, roles)
+                        VALUES (
+                            <cfqueryparam value="#arguments.hiddenContactId#" cfsqltype="cf_sql_integer">,
+                            <cfqueryparam value="#roles#" cfsqltype="cf_sql_varchar">
+                        )
+                    </cfquery>
+                </cfloop>
                 <cfreturn true>
-            <cfelse>
-                <cfreturn false>
+                <cfelse>
+                    <cfreturn false>
             </cfif>
         <cfelse>   
             <!--- Insert new record --->
@@ -169,6 +174,23 @@
                         <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
                     )
                 </cfquery>
+                <!---select emailid,userid for inserting  roles--->
+                <cfquery name="selectNewContact" datasource="DESKTOP-8VHOQ47">
+                    SELECT * FROM contactDetails 
+                    WHERE emailID = <cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar"> 
+                    AND userId = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
+                </cfquery>
+                <!---Insert roles--->
+                <cfset local.rolesArray = listToArray(arguments.roles)>
+                <cfloop array="#local.rolesArray#" index="setroles">
+                    <cfquery name="addroles" datasource="DESKTOP-8VHOQ47">
+                        INSERT INTO rolesTable (contactId,roles)
+                        VALUES (
+                            <cfqueryparam value="#selectNewContact.contactId#" cfsqltype="cf_sql_varchar">,
+                            <cfqueryparam value="#setroles#" cfsqltype="cf_sql_varchar">
+                        )
+                    </cfquery>
+                </cfloop>
                 <cfreturn true>
             <cfelse>
                 <cfreturn false>
@@ -212,6 +234,16 @@
             <cfset local.contact.email=contactSet.emailID>
             <cfset local.contact.pincode=contactSet.pincode>
             <cfset local.contact.profilePic=contactSet.profilePic>
+            <cfquery name="rolesSet" datasource="DESKTOP-8VHOQ47">
+                SELECT roles 
+                FROM rolesTable 
+                WHERE contactId = <cfqueryparam value="#contactSet.contactId#" cfsqltype="cf_sql_integer">
+            </cfquery>
+            <cfset local.rolesArray = []>
+            <cfloop query="rolesSet">
+                <cfset arrayAppend(local.rolesArray, rolesSet.roles)>
+            </cfloop>
+            <cfset local.contact.roles = local.rolesArray>
         </cfif>
         <cfset serializedContact = serializeJSON(local.contact)>
         <cfreturn serializedContact>
@@ -239,10 +271,31 @@
             <cfset local.result['email']=selectInputs.emailID>
             <cfset local.result['pincode']=selectInputs.pincode>
             <cfset local.result['myFile'] = selectInputs.profilePic>
+            <!---Update roles--->
+            <cfquery name="selectroles" datasource="DESKTOP-8VHOQ47">
+                SELECT roles 
+                FROM rolesTable 
+                WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">
+            </cfquery>
+            <cfset local.rolesArray = []>
+            <cfloop query="selectroles">
+                <cfset arrayAppend(local.rolesArray, selectroles.roles)>
+            </cfloop>
+            <cfset local.result['roles'] = local.rolesArray>
         </cfif>
         <cfset serializedContact = serializeJSON(local.result)>
         <cfreturn serializedContact>
     </cffunction>
+    <!---Log out--->
+    <cffunction  name="doLogout" returntype="any" access="remote">
+        <cfset session.login=false>
+        <cfset session.fullName = "">
+        <cfset session.imgProfile = "">
+        <cfset session.userId = "">
+        <cfset session.sso=false>
+        <cflocation url="../loginPage.cfm" addtoken="false">
+    </cffunction>
+
     <!---SSO--->
     <cffunction name="googleLogin" access="remote" returnFormat="PLAIN">
         <cfargument name="emailID" required="true">
@@ -258,7 +311,7 @@
             <cfset session.sso = true>
             <cfset session.fullName = ssoLogin.fullName>
             <cfset session.imgProfile = ssoLogin.imgFile>
-            <cfset session.userID = ssoLogin.userId>
+            <cfset session.userId = ssoLogin.userId>
             <cfset response = true>
         <cfelse>
             <cfset saveSSO = result.saveSSO(arguments.emailID, arguments.name, arguments.image)> <!--- Save user in SSO --->
@@ -269,14 +322,13 @@
                     <cfset session.sso = true> 
                     <cfset session.fullName = ssoLogin.fullName>
                     <cfset session.imgProfile = ssoLogin.imgFile>
-                    <cfset session.userID = ssoLogin.userId>
+                    <cfset session.userId = ssoLogin.userId>
                 </cfif>
                 <cfset response = true>
             </cfif>
         </cfif>
         <cfreturn response >
     </cffunction>
-    
     <!---SSO Items--->
     <cffunction name="ssoLogin" access="remote" returnformat="plain">
         <cfargument name="emailID" required="true">
@@ -287,7 +339,6 @@
         </cfquery>
         <cfreturn checkSSOLogin >
     </cffunction>
-
     <!---Save SSO Items--->
     <cffunction  name="saveSSO" access="remote"  returnformat="Plain">
         <cfargument name = "emailID" required="true">
@@ -302,11 +353,13 @@
             ) 
         </cfquery>
         <cfreturn true>
-    </cffunction> 
-    
+    </cffunction>
+
     <!---Upload Excel--->
     <cffunction name="uploadExcelDatas" access="remote" returnformat="JSON">
         <cfargument name="excelFile" type="any" required="true">
+        <cfargument name="hiddenContactId" type="any" > 
+        <cfargument name="emailID" type="any"> 
         <cfset var local = {}>
         <cfset local.response = []>
         <cfset local.excelUpload = expandPath("../Uploads/")>
@@ -325,14 +378,15 @@
             street: "col_8",
             phoneNumber: "col_10",
             emailID: "col_9",
-            pincode: "col_11"
+            pincode: "col_11",
+            roles:"col_12"
         }>
         <cfset local.totalInserted = 0>
         <cfset local.totalUpdated = 0>
         <cfloop query="local.excelValues" startRow=2>
             <cfset local.email = local.excelValues[local.mapping.emailID]>
             <cfquery name='checkExcelEmail' datasource="DESKTOP-8VHOQ47">
-                SELECT emailID FROM contactDetails
+                SELECT emailID,contactId FROM contactDetails
                 WHERE emailID = <cfqueryparam value="#local.email#" cfsqltype="cf_sql_varchar">
                 and userId=<cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
             </cfquery>
@@ -347,56 +401,88 @@
                 street: local.excelValues[local.mapping.street],
                 phoneNumber: local.excelValues[local.mapping.phoneNumber],
                 emailID: local.excelValues[local.mapping.emailID],
-                pincode: local.excelValues[local.mapping.pincode]
+                pincode: local.excelValues[local.mapping.pincode],
+                roles: local.excelValues[local.mapping.roles]
             }>
             <cfif checkExcelEmail.recordCount gt 0>
+                <cfset local.contactId = checkExcelEmail.contactId>
                 <cfquery name="UpdateExcel" datasource="DESKTOP-8VHOQ47">
                     UPDATE contactDetails 
                     SET 
-                        title = <cfqueryparam value="#local.recordData.title#" cfsqltype="cf_sql_varchar">,
-                        firstName = <cfqueryparam value="#local.recordData.firstName#" cfsqltype="cf_sql_varchar">,
-                        larstName = <cfqueryparam value="#local.recordData.lastName#" cfsqltype="cf_sql_varchar">,
-                        gender = <cfqueryparam value="#local.recordData.gender#" cfsqltype="cf_sql_varchar">,
-                        dob = <cfqueryparam value="#local.recordData.dob#" cfsqltype="cf_sql_varchar">,
-                        addressField = <cfqueryparam value="#local.recordData.addressField#" cfsqltype="cf_sql_varchar">,
-                        street = <cfqueryparam value="#local.recordData.street#" cfsqltype="cf_sql_varchar">,
-                        phoneNumber = <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
-                        pincode = <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">
-                    WHERE emailID = <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">
+                        title = <cfqueryparam value="#(local.recordData.title)#" cfsqltype="cf_sql_varchar">,
+                        firstName = <cfqueryparam value="#(local.recordData.firstName)#" cfsqltype="cf_sql_varchar">,
+                        larstName = <cfqueryparam value="#(local.recordData.lastName)#" cfsqltype="cf_sql_varchar">,
+                        gender = <cfqueryparam value="#(local.recordData.gender)#" cfsqltype="cf_sql_varchar">,
+                        dob = <cfqueryparam value="#(local.recordData.dob)#" cfsqltype="cf_sql_varchar">,
+                        addressField = <cfqueryparam value="#(local.recordData.addressField)#" cfsqltype="cf_sql_varchar">,
+                        street = <cfqueryparam value="#(local.recordData.street)#" cfsqltype="cf_sql_varchar">,
+                        phoneNumber = <cfqueryparam value="#(local.recordData.phoneNumber)#" cfsqltype="cf_sql_varchar">,
+                        pincode = <cfqueryparam value="#(local.recordData.pincode)#" cfsqltype="cf_sql_varchar">
+                    WHERE emailID = <cfqueryparam value="#(local.recordData.emailID)#" cfsqltype="cf_sql_varchar">
                     and userId=<cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
                 </cfquery>
+                <cfset local.rolesArray = listToArray(local.recordData.roles)>
+                <cfquery name="deleteroles" datasource="DESKTOP-8VHOQ47">
+                    DELETE FROM rolesTable WHERE contactId = <cfqueryparam value="#local.contactId#" cfsqltype="cf_sql_integer">
+                </cfquery>
+                <cfloop array="#local.rolesArray#" index="roles">
+                    <cfquery name="addroles" datasource="DESKTOP-8VHOQ47">
+                        INSERT INTO rolesTable (contactId, roles)
+                        VALUES (
+                            <cfqueryparam value="#local.contactId#" cfsqltype="cf_sql_integer">,
+                            <cfqueryparam value="#roles#" cfsqltype="cf_sql_varchar">
+                        )
+                    </cfquery>
+                </cfloop>
                 <cfset local.totalUpdated = local.totalUpdated + 1>
             <cfelse>
                 <cfquery name="insertQuery" datasource="DESKTOP-8VHOQ47">
                     INSERT INTO contactDetails (title, firstName, larstName, gender, dob, profilePic, addressField, street, phoneNumber, emailID, pincode, userId)
                     VALUES (
-                        <cfqueryparam value="#local.recordData.title#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.firstName#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.lastName#" cfsqltype="cf_sql_varchar">,  
-                        <cfqueryparam value="#local.recordData.gender#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.dob#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.profilePic#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.addressField#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.street#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.phoneNumber#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar">,
-                        <cfqueryparam value="#local.recordData.pincode#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.title)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.firstName)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.lastName)#" cfsqltype="cf_sql_varchar">,  
+                        <cfqueryparam value="#(local.recordData.gender)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.dob)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.profilePic)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.addressField)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.street)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.phoneNumber)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.emailID)#" cfsqltype="cf_sql_varchar">,
+                        <cfqueryparam value="#(local.recordData.pincode)#" cfsqltype="cf_sql_varchar">,
                         <cfqueryparam value="#session.userID#" cfsqltype="cf_sql_varchar">
+                        
                     )
                 </cfquery>
+                <!---select emailid,userid for insert roles--->
+                <cfquery name="selectNewContact" datasource="DESKTOP-8VHOQ47">
+                    SELECT * FROM contactDetails 
+                    WHERE emailID = <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar"> 
+                    AND userId = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
+                </cfquery>
+                <!---Insert roles--->
+                <cfset local.rolesArray = listToArray(local.recordData.roles)>
+                <cfloop array="#local.rolesArray#" index="setroles">
+                    <cfquery name="addroles" datasource="DESKTOP-8VHOQ47">
+                        INSERT INTO rolesTable (contactId, roles)
+                        VALUES (
+                            <cfqueryparam value="#selectNewContact.contactId#" cfsqltype="cf_sql_integer">,
+                            <cfqueryparam value="#setroles#" cfsqltype="cf_sql_varchar">
+                        )
+                    </cfquery>
+                </cfloop>
                 <cfset local.totalInserted = local.totalInserted + 1>
             </cfif>
         </cfloop>
         <!--- Check whether the records are inserted or updated --->
         <cfif local.totalInserted gt 0 AND local.totalUpdated gt 0>
-            <cfset arrayAppend(local.response, {"success": true, "message": "Excel Updated and Inserted."})>
+            <cfset local.response= {"success": true, "message": "Excel Updated and Inserted."}>
         <cfelseif local.totalInserted gt 0>
-            <cfset arrayAppend(local.response, {"success": true, "message": "Excel Uploaded Successfully with new records."})>
+            <cfset local.response = {"success": true, "message": "Excel Uploaded Successfully with new records."}>
         <cfelseif local.totalUpdated gt 0>
-            <cfset arrayAppend(local.response, {"success": true, "message":  "Already Excel Uploaded  so update the records."})>
+            <cfset local.response = {"success": true, "message":  "Already Excel Uploaded  so update the records."}>
         </cfif>
-        <cfreturn serializeJSON(local.response)>
-    </cffunction>
+        <cfset local.result  = serializeJSON(local.response)>
+        <cfreturn local.result>
+    </cffunction> 
 </cfcomponent>
-
-

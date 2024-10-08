@@ -311,3 +311,39 @@ h1{
     width:300px;
     height:auto;
 }
+.itemsAlign{
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+}
+.rowAlign{
+    display:flex;
+    justify-content: space-between;
+}
+.itemsAlign input[type=text],input[type=date]{
+    border-right: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+    outline: none;
+    height: 30px;
+}
+.rowAlign2{
+    display:flex;
+    gap:50px;
+}
+.personal{
+    color: #338fc5;
+}
+.rolesSet option:checked {
+    background-color: #d3d3d3; 
+    color: #000; 
+}
+.emailCont{
+    border-right: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+    outline: none;
+    height: 30px;
+}

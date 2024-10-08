@@ -1,8 +1,8 @@
+
 <cfoutput>
+
     <cfif session.login>
         <cfhtmltopdf>
-            <cfheader name="Content-Disposition" value="attachment; filename=list.pdf">
-            <cfheader name="Content-Type" value="application/pdf">
             <div class="displayPdfDatas d-flex" id="pdfSet">
                 <div class="col-12">
                     <table class="tableSet">
@@ -23,7 +23,7 @@
                                <th class="titleValues" scope="col-3">
                                     <h5><b>GENDER</b></h5>
                                  </th>
-                                <th class="titleValues" scope="col-3">
+                                <th class="titleValues" scope="col-4">
                                     <h5><b>DOB</b></h5>
                                  </th>
                                 <th class="titleValues" scope="col-3">
@@ -32,12 +32,22 @@
                                 <th class="titleValues" scope="col-3">
                                     <h5><b>PINCODE</b></h5>
                                  </th>
+                                 <th class="titleValues" scope="col-3">
+                                    <h5><b>HOBBIES</b></h5>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             <cfset contacts = EntityLoad("ORM_CREATE_CONTACT")>
+                            <cfset rolesList = "">
                             <cfloop array="#contacts#" index="contact">
-                                 <cfif session.userID EQ contact.getuserId()>
+                                <cfset roles=EntityLoad("rolesOrm")> 
+                                <cfloop array="#roles#" index="roles">
+                                    <cfif contact.getcontactId() EQ roles.getcontactId()>
+                                        <cfset rolesList = listAppend(rolesList, roles.getroles())>
+                                    </cfif>
+                                </cfloop>
+                                <cfif session.userID EQ contact.getuserId()>
                                     <tr class="tableRow">
                                         <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile" width="20" height="20"></td>
                                         <td class="">#contact.getfirstName()# #contact.getlarstName()#</td>
@@ -47,13 +57,18 @@
                                         <td class="">#contact.getdob()#</td>
                                         <td class="">#contact.getaddressField()#,#contact.getstreet()#</td>
                                         <td class="">#contact.getpincode()#</td>
+                                        <td class="">#rolesList#</td>
                                     </tr>
                                 </cfif>
+                                <cfset rolesList = "">
                             </cfloop>
                         </tbody>
                     </table>
                 </div>
             </div>
+            
+            <cfheader name="Content-Disposition" value="attachment; filename=list.pdf">
+            <cfheader name="Content-Type" value="application/pdf">
         </cfhtmltopdf>
     </cfif>
 </cfoutput>

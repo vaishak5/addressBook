@@ -1,7 +1,7 @@
 <cfoutput>
     <cfif session.login>
         <cfset contacts = EntityLoad("ORM_CREATE_CONTACT",{userId=session.userID})>
-        <cfset excelSet=queryNew("Title,FirstName,LastName,Gender,DateOfBirth,Profile,Address,Street,Email,PhoneNumber,Pincode","varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar")>
+        <cfset excelSet=queryNew("Title,FirstName,LastName,Gender,DateOfBirth,Profile,Address,Street,Email,PhoneNumber,Pincode,Roles","varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar,varchar")>
         <cfloop array="#contacts#" index="contact">
             <cfset local.title = contact.gettitle()>
             <cfset local.firstName = contact.getfirstName()>
@@ -14,6 +14,13 @@
             <cfset local.email = contact.getemailID()>
             <cfset local.phone = contact.getphoneNumber()>
             <cfset local.pincode = contact.getpincode()>
+            <cfset local.rolesList = "">
+            <cfset roles = EntityLoad("rolesOrm")>
+            <cfloop array="#roles#" index="roles">
+                <cfif contact.getcontactId() EQ roles.getcontactId()>
+                    <cfset local.rolesList = listAppend(local.rolesList, roles.getroles())>
+                </cfif>
+            </cfloop>
             <cfset queryAddRow(excelSet ,1)>
             <cfset querySetCell(excelSet, "Title", local.title)>
             <cfset querySetCell(excelSet, "FirstName", local.firstName)>
@@ -26,6 +33,7 @@
             <cfset querySetCell(excelSet, "Email", local.email)>
             <cfset querySetCell(excelSet, "PhoneNumber", local.phone)>
             <cfset querySetCell(excelSet, "Pincode", local.pincode)>
+            <cfset querySetCell(excelSet,"Roles",local.rolesList)>
         </cfloop>
         <cfset excelDown=expandPath("../assets/contacts.xlsx")>
         <cfspreadsheet action="write" filename="#excelDown#" query="excelSet" sheetname="contacts">

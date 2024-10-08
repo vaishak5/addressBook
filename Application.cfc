@@ -11,7 +11,7 @@ component output="false"
         session.fullName = "";
         session.imgFile = "";
         session.imgProfile="";
-       session.sso=false;
+        session.sso=false;
         return true;
     }
     public boolean function onRequestStart() {

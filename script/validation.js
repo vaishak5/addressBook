@@ -76,10 +76,6 @@ $(document).ready(function () {
     $("#hiddenContactId").val("0");
   });
 
-  $("#formClose").click(function (e) {
-    e.preventDefault();
-    $("#myForm").get(0).reset();
-  });
 
   /*Create Contact(Entering new datas into the form)*/
   $("#dataCreating").click(function () {
@@ -95,6 +91,7 @@ $(document).ready(function () {
     var phoneNum = $("#phoneNumber").val().trim();
     var email = $("#email").val().trim();
     var pincode = $("#pincode").val().trim();
+    var roles = $("#roles").val();
     var formData = new FormData();
     formData.append("hiddenContactId", hiddenContactId);
     formData.append("title", title);
@@ -108,6 +105,7 @@ $(document).ready(function () {
     formData.append("phoneNumber", phoneNum);
     formData.append("email", email);
     formData.append("pincode", pincode);
+    formData.append("roles", roles);
     if (formValidation()) {
       $.ajax({
         type: "POST",
@@ -177,6 +175,7 @@ $(document).ready(function () {
         $("#emailid").html(viewDetails.EMAIL);
         $("#pincodeSecond").html(viewDetails.PINCODE);
         $("#myImage").attr("src", "../assets/" + viewDetails.PROFILEPIC);
+        $("#rolesDatas").html(viewDetails.ROLES + " ");
       },
       error: function (xhr, status, error) {
         console.error("Error:", status, error);
@@ -217,6 +216,9 @@ $(document).ready(function () {
           $("#email").val(selectDetails.email);
           $("#pincode").val(selectDetails.pincode);
           $(".editImg").attr("src", "../assets/" + selectDetails.myFile);
+          var rolesArray = selectDetails.roles;
+          console.log(rolesArray);
+          $("#roles").val(rolesArray); 
         },
         error: function (xhr, status, error) {
           console.error("Error:", status, error);
@@ -241,19 +243,17 @@ $(document).ready(function() {
       event.preventDefault(); 
       var formData = new FormData($("#uploadForm")[0]); 
       $.ajax({
-          url: './models/addressBook.cfc?method=uploadExcelDatas',
+          url: '../models/addressBook.cfc?method=uploadExcelDatas',
           method: 'POST',
           data: formData,
           processData: false,
           contentType: false,
           dataType: "json", 
           success: function(response) {
-              if (response.length > 0) {
-                  response.forEach(function(item) {
-                      alert(item.message);
-                      window.location.href = "./listPage.cfm";
-                  });
-              }
+            if (response.success ===true) {
+              alert(response.message);
+                window.location.href="./listPage.cfm"
+            } 
           },
           error: function(xhr, status, error) {
               console.log("An error occurred: " + error);
@@ -352,9 +352,7 @@ function formValidation() {
   var month = String(d.getMonth() + 1).padStart(2, '0'); 
   var day = String(d.getDate()).padStart(2, '0'); 
   var strDate = year + "-" + month + "-" + day;
-  console.log("Current Date:", strDate);
   var dob = $("#dob").val().trim();
-  console.log("Date of Birth:", dob);
   var currentDate = new Date(strDate);
   var dobDate=new Date(dob);
   var profile = $("#profile").val().trim();
@@ -363,6 +361,7 @@ function formValidation() {
   var phoneNum = $("#phoneNumber").val().trim();
   var email = $("#email").val().trim();
   var pincode = $("#pincode").val().trim();
+  var roles=$("#roles");
   var isValid = true;
   var errorMsg = [];
   var specialCharRegex = /[<>]/;
@@ -416,6 +415,10 @@ function formValidation() {
       errorMsg.push("Please enter a valid 6-digit pincode.");
       isValid = false;
     }
+    if (roles.val().length === 0) {
+      errorMsg.push("Please select at least one hobby.");
+      isValid = false;
+  } 
   }
   // Display the error message
   if (errorMsg.length > 0) {

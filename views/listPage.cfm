@@ -31,7 +31,7 @@
             </div>
             <div class="navbarSndSet">
                <img class="loginLogo" src="../assets/logout.png" alt="img" width="20" height="20">
-              <a href="../controllers/nonsql.cfc?method=doLogout">Logout</a> 
+              <a href="../controllers/address.cfc?method=doLogout">Logout</a> 
             </div>
          </div>
          <div class="mainSett">
@@ -56,7 +56,6 @@
                            <button type="button" id="createContactButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="##exampleModal" >
                            Create Contact
                            </button>
-                           
                            <!-- Modal -->
                            <div class="modal bd-example-modal-lg fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog modal-lg p-1">
@@ -74,93 +73,107 @@
                                              </div>
                                              <div class="inputFields">
                                                 <form class="formField" method="post" action="" id="myForm">
-                                                   <!---First Input--->
-                                                   <div class="inputSet d-flex gap-5 py-2">
-                                                      <div class="titleSet d-flex flex-column">
-                                                         <input type="hidden" id="hiddenContactId" value="0">
-                                                         <label for="title" class="title col-3">Title*</label>
-                                                         <select name="title" id="titles" required>
-                                                            <option value selected="selected"></option>
-                                                            <option value="MR.">Mr.</option>
-                                                            <option value="MRS.">Mrs.</option>
-                                                            <option value="MS.">Ms.</option>
-                                                         </select>
-                                                      </div>
-                                                      <div class="firstName d-flex flex-column">
-                                                         <label for="fname" class="fname col-6">First Name*</label>
-                                                         <input type="text" name="fname" placeholder="Your First Name" id="firstName"  required>
-                                                      </div>
-                                                      <div class="lastName d-flex flex-column">
-                                                         <label for="lname" class="lname col-6">Last Name*</label>
-                                                         <input type="text" name="lname" placeholder="Your Last Name" id="lastName" required>
-                                                      </div>
-                                                   </div>
-                                                   <!---Second Input--->
-                                                   <div class="inputSetSecond d-flex gap-5 py-3">
-                                                      <div class="titleSet d-flex flex-column">
-                                                         <label for="gender" class="title col-3">Gender*</label>
-                                                         <select name="gender" id="gender" required>
-                                                            <option value selected="selected"></option>
-                                                            <option value="Male">Male</option>
-                                                            <option value="Female">Female</option>
-                                                         </select>
-                                                      </div>
-                                                      <div class="dateSet d-flex flex-column">
-                                                         <label for="dob" class="dob col-10">Date Of Birth*:</label>
-                                                         <input type="date" id="dob" name="dob"  required>
-                                                      </div>
-                                                   </div>
-                                                   <!---Third Input--->
-                                                   <div class="inputThird d-flex">
-                                                      <div class="upload d-flex flex-column col-8">
-                                                         <label for="profile" class="file col-4">Upload Photo*</label>
-                                                         <input type="file" id="profile" name="profile" required>
-                                                      </div>
-                                                   </div>
-                                                   <!---Heading2--->
-                                                   <div class="details">
-                                                      <div class="nextHeading mt-3 w-100 d-flex justify-content-center">
-                                                         <h5 class="personal w-100 d-flex py-1">Contact Details</h5>
-                                                      </div>
-                                                   </div>
-                                                   <!---Fourth Input--->
-                                                   <div class="inputSet d-flex gap-5 py-2">
-                                                      <div class="firstName d-flex flex-column col-5">
-                                                         <label for="address" class="fname col-4">Address*</label>
-                                                         <input type="text" name="address" id="address" required>
-                                                      </div>
-                                                      <div class="lastName d-flex flex-column col-5">
-                                                         <label for="street" class="lname col-3">Street*</label>
-                                                         <input type="text" name="street" id="street" required>
-                                                      </div>
-                                                   </div>
-                                                   <!---Fifth Input--->
-                                                   <div class="inputSet d-flex gap-5 py-2">
-                                                      <div class="firstName d-flex flex-column col-5">
-                                                         <label for="fname"  class="fname col-7">Phone Number*</label>
-                                                         <input type="text" name="fname"  id="phoneNumber" required>
-                                                      </div>
-                                                      <div class="lastName d-flex flex-column col-5">
-                                                         <label for="lname" class="lname col-3">Email*</label>
-                                                         <input type="email" name="lname" id="email" required>
-                                                      </div>
-                                                   </div>
-                                                   <!---Sixth Input--->
-                                                   <div class="inputSet d-flex gap-5 py-2">
-                                                      <div class="firstName d-flex flex-column col-5">
-                                                         <label for="fname"  class="fname col-4">Pincode*</label>
-                                                         <input type="text" name="fname" maxlength="6" id="pincode" required>
-                                                      </div>
+                                                   <input type="hidden" id="hiddenContactId" value="0">
+                                                   <table class="table">
+                                                      <tbody>
+                                                         <!-- First Input -->
+                                                         <tr class="rowAlign">
+                                                            <td class="itemsAlign">
+                                                               <label for="title" class="displayItems">Title*</label>
+                                                               <select name="title" id="titles" required>
+                                                                  <option value selected="selected"></option>
+                                                                  <option value="MR.">Mr.</option>
+                                                                  <option value="MRS.">Mrs.</option>
+                                                                  <option value="MS.">Ms.</option>
+                                                               </select>
+                                                            </td>
+                                                            <td class="itemsAlign">
+                                                               <label for="fname" class="displayItems">First Name*</label>
+                                                               <input type="text" name="fname" placeholder="Your First Name" id="firstName" required>
+                                                            </td>
+                                                            <td class="itemsAlign">
+                                                               <label for="lname" class="displayItems">Last Name*</label>
+                                                               <input type="text" name="lname" placeholder="Your Last Name" id="lastName" required>
+                                                            </td>
+                                                         </tr>
+                                                         <!-- Second Input -->
+                                                         <tr class="rowAlign2">
+                                                            <td class="itemsAlign">
+                                                               <label for="gender" class="displayItems">Gender*</label>
+                                                               <select name="gender" id="gender" required>
+                                                                  <option value selected="selected"></option>
+                                                                  <option value="Male">Male</option>
+                                                                  <option value="Female">Female</option>
+                                                               </select>
+                                                            </td>
+                                                            <td class="itemsAlign">
+                                                               <label for="dob" class="displayItems">Date Of Birth*:</label>
+                                                               <input type="date" id="dob" name="dob" required>
+                                                            </td>
+                                                         </tr>
+                                                         <tr class="rowAlign">
+                                                            <td class="itemsAlign">
+                                                               <label for="profile" class="displayItems">Upload Photo*</label>
+                                                               <input type="file" id="profile" name="profile" required>
+                                                            </td>
+                                                         </tr>
+                                                         <!-- Heading2 -->
+                                                         <tr>
+                                                            <td colspan="3" class="details text-center">
+                                                               <h5 class="personal w-100 d-flex py-1">Contact Details</h5>
+                                                            </td>
+                                                         </tr>
+                                                         <!-- Fourth Input -->
+                                                         <tr class="rowAlign">
+                                                            <td class="itemsAlign">
+                                                               <label for="address" class="displayItems">Address*</label>
+                                                               <input type="text" name="address" id="address" required>
+                                                            </td>
+                                                            <td class="itemsAlign">
+                                                               <label for="street" class="displayItems">Street*</label>
+                                                               <input type="text" name="street" id="street" required>
+                                                            </td>
+                                                         </tr>
+                                                         <!-- Fifth Input -->
+                                                         <tr class="rowAlign">
+                                                            <td class="itemsAlign">
+                                                               <label for="phoneNumber" class="displayItems">Phone Number*</label>
+                                                               <input type="text" name="phoneNumber" id="phoneNumber" required>
+                                                            </td>
+                                                            <td class="itemsAlign">
+                                                               <label for="email" class="displayItems">Email*</label>
+                                                               <input type="email" name="email" id="email" class="emailCont" required>
+                                                            </td>
+                                                         </tr>
+                                                         <!-- Sixth Input -->
+                                                         <tr class="rowAlign">
+                                                            <td class="itemsAlign">
+                                                               <label for="pincode" class="displayItems">Pincode*</label>
+                                                               <input type="text" name="pincode" id="pincode" required>
+                                                            </td>
+                                                         </tr>
+                                                         <!-- Roles -->
+                                                         <tr class="rowAlign">
+                                                            <td colspan="3" class="itemsAlign">
+                                                               <label for="roles" class="displayItems" >Roles</label>
+                                                               <select class="rolesSet" id="roles" multiple>
+                                                                  <option value="Manager">Manager</option>
+                                                                  <option value="Driver">Driver</option>
+                                                                  <option value="Cleaner">Cleaner</option>
+                                                                  <option value="Admin">Admin</option>
+                                                                  <option value="Supervisor">Supervisor</option>
+                                                               </select>
+                                                            </td>
+                                                         </tr>
+                                                      </tbody>
+                                                   </table>
+                                                   <span id="errorMsg" class="errorTxt"></span>
+                                                   <div class="footer col-8 py-3 gap-3">
+                                                      <button type="button" class="btn btn-primary" id="dataCreating">Submit</button>
+                                                      <button type="button" class="btn btn-secondary" id="formClose" data-bs-dismiss="modal" aria-bs-label="Close" onclick="myFunction()">Close</button>
                                                    </div>
                                                 </form>
                                              </div>
-                                             <span id="errorMsg" class="errorTxt"></span>
-                                             <!---Close--->
-                                             <div class="footer col-8 py-3 gap-3">
-                                                <button type="button" class="btn btn-primary" id="dataCreating">Submit</button>
-                                                <button type="button" class="btn btn-secondary close" id="formClose" data-bs-dismiss="modal" aria-bs-label="Close" onclick="myFunction()">Close</button>
-                                             </div>
-                                             <!---Close--->
                                           </div>
                                        </div>
                                        <div class="secondMain col-4">
@@ -232,74 +245,73 @@
                               </tr>
                            </thead>
                            <tbody>
-                             <cfset variables.contacts = EntityLoad("ORM_Create_Contact")>
+                              <cfset variables.contacts = EntityLoad("ORM_Create_Contact",{userID=session.userID})>
                               <cfloop array="#variables.contacts#" index="contact">
-                                 <cfset variables.contactId = contact.getcontactId()>
-                                 <cfif session.userID EQ contact.getuserId()>
-                                    <tr class="#variables.contactId#">
-                                       <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile"></td>
-                                       <td class="nameList">#contact.getfirstName()# #contact.getlarstName()#</td>
-                                       <td class="emailList">#contact.getemailID()#</td>
-                                       <td class="phoneList">#contact.getphoneNumber()#</td>
-                                       <td><button type="submit" class="btn btn-primary editBtn" data-bs-toggle="modal" data-bs-target="##exampleModal" data-id="#variables.contactId#">Edit</button></td>
-                                       <td><button type="submit" class="btn btn-primary delete"  data-id="#variables.contactId#">Delete</button></td>
-                                       <td><button type="button" class="btn btn-primary view" data-bs-toggle="modal" data-bs-target="##exampleModal2"  data-id="#variables.contactId#">View</button></td>
-                                       <!--View Modal -->
-                                       <div class="modal bd-example-modal-lg fade" id="exampleModal2" tabindex="-1"  aria-hidden="true">
-                                          <div class="modal-dialog modal-lg p-1">
-                                             <div class="wholeSection d-flex">
-                                                <div class="modalContent bg-white col-9">
-                                                   <div class="heading d-flex justify-content-center col-9">
-                                                      <h3 class="creating px-4">CONTACT DETAILS</h3>
-                                                   </div>
-                                                   <div class="displayItems d-flex align-items-baseline px-5 py-3">
-                                                      <div class="displayDetails d-flex flex-column col-12">
-                                                         <div class="nameSet d-flex">
-                                                            <p class="set col-3">Name:</p>
-                                                            <p class="name" id="fullName"></p>
-                                                         </div>
-                                                         <div class="genderSet d-flex">
-                                                            <p class="set col-3">Gender:</p>
-                                                            <p class="gender" id="genders"></p>
-                                                         </div>
-                                                         <div class="dobSet d-flex">
-                                                            <p class="set col-3">Date of Birth:</p>
-                                                            <p class="date" id="dobSecond"></p>
-                                                         </div>
-                                                         <div class="addressSet d-flex">
-                                                            <p class="set col-3">Full Address:</p>
-                                                            <p class="address" id="addressSecond"></p>
-                                                         </div>
-                                                         <div class="phoneSet d-flex">
-                                                            <p class="set col-3">Phone Number:</p>
-                                                            <p class="phone" id="phoneNumberSecond"></p>
-                                                         </div>
-                                                         <div class="emailSet d-flex">
-                                                            <p class="set col-3">Email:</p>
-                                                            <p class="email" id="emailid"></p>
-                                                         </div>
-                                                         <div class="pincodeSet d-flex">
-                                                            <p class="set col-3">Pincode:</p>
-                                                            <p class="pin" id="pincodeSecond"></p>
-                                                         </div>
+                                 <tr>
+                                    <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile"></td>
+                                    <td class="nameList">#contact.getfirstName()# #contact.getlarstName()#</td>
+                                    <td class="emailList">#contact.getemailID()#</td>
+                                    <td class="phoneList">#contact.getphoneNumber()#</td>
+                                    <td><button type="submit" class="btn btn-primary editBtn" data-bs-toggle="modal" data-bs-target="##exampleModal" data-id="#contact.getContactId()#">Edit</button></td>
+                                    <td><button type="submit" class="btn btn-primary delete"  data-id="#contact.getContactId()#">Delete</button></td>
+                                    <td><button type="button" class="btn btn-primary view" data-bs-toggle="modal" data-bs-target="##exampleModal2"  data-id="#contact.getContactId()#">View</button></td>
+                                    <!--View Modal -->
+                                    <div class="modal bd-example-modal-lg fade" id="exampleModal2" tabindex="-1"  aria-hidden="true">
+                                       <div class="modal-dialog modal-lg p-1">
+                                          <div class="wholeSection d-flex">
+                                             <div class="modalContent bg-white col-9">
+                                                <div class="heading d-flex justify-content-center col-9">
+                                                   <h3 class="creating px-4">CONTACT DETAILS</h3>
+                                                </div>
+                                                <div class="displayItems d-flex align-items-baseline px-5 py-3">
+                                                   <div class="displayDetails d-flex flex-column col-12">
+                                                      <div class="nameSet d-flex">
+                                                         <p class="set col-3">Name:</p>
+                                                         <p class="name" id="fullName"></p>
+                                                      </div>
+                                                      <div class="genderSet d-flex">
+                                                         <p class="set col-3">Gender:</p>
+                                                         <p class="gender" id="genders"></p>
+                                                      </div>
+                                                      <div class="dobSet d-flex">
+                                                         <p class="set col-3">Date of Birth:</p>
+                                                         <p class="date" id="dobSecond"></p>
+                                                      </div>
+                                                      <div class="addressSet d-flex">
+                                                         <p class="set col-3">Full Address:</p>
+                                                         <p class="address" id="addressSecond"></p>
+                                                      </div>
+                                                      <div class="phoneSet d-flex">
+                                                         <p class="set col-3">Phone Number:</p>
+                                                         <p class="phone" id="phoneNumberSecond"></p>
+                                                      </div>
+                                                      <div class="emailSet d-flex">
+                                                         <p class="set col-3">Email:</p>
+                                                         <p class="email" id="emailid"></p>
+                                                      </div>
+                                                      <div class="pincodeSet d-flex">
+                                                         <p class="set col-3">Pincode:</p>
+                                                         <p class="pin" id="pincodeSecond"></p>
+                                                      </div>
+                                                      <div class="roleSet d-flex">
+                                                         <p class="set col-3">Roles:</p>
+                                                         <p class="role" id="rolesDatas"></p>
                                                       </div>
                                                    </div>
-                                                   <div class="footerSet py-3 d-flex justify-content-center">
-                                                      <button type="button" class="btn btn-primary" id="closeBtn"  data-bs-dismiss="modal" aria-bs-label="Close" onclick="myFunction()">Close</button>
-                                                   </div>
                                                 </div>
-                                                <div class="imgSetContss col-3">
-                                                   <div class="placeImg">
-                                                      <img id="myImage" src="" alt="image" class="editImg">
-                                                   </div>
+                                                <div class="footerSet py-3 d-flex justify-content-center">
+                                                   <button type="button" class="btn btn-primary" id="closeBtn"  data-bs-dismiss="modal" aria-bs-label="Close" onclick="myFunction()">Close</button>
+                                                </div>
+                                             </div>
+                                             <div class="imgSetContss col-3">
+                                                <div class="placeImg">
+                                                   <img id="myImage" src="" alt="image" class="editImg">
                                                 </div>
                                              </div>
                                           </div>
                                        </div>
-                                    </tr>
-                                 <cfelse>
-                                    <cfcontinue>
-                                 </cfif>
+                                    </div>
+                                 </tr>
                               </cfloop>
                            </tbody>
                         </table>
