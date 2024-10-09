@@ -201,9 +201,6 @@ $(document).ready(function () {
           var selectDetails = JSON.parse(response);
           var date = new Date(selectDetails.dob);
           var dateSet = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2);
-          console.log(response);
-          console.log(selectDetails.myFile);
-          console.log(selectDetails);
           $("#hiddenContactId").val(selectDetails.contactId);
           $("#titles").val(selectDetails.title);
           $("#firstName").val(selectDetails.firstName);
@@ -217,7 +214,6 @@ $(document).ready(function () {
           $("#pincode").val(selectDetails.pincode);
           $(".editImg").attr("src", "../assets/" + selectDetails.myFile);
           var rolesArray = selectDetails.roles;
-          console.log(rolesArray);
           $("#roles").val(rolesArray); 
         },
         error: function (xhr, status, error) {
@@ -416,7 +412,7 @@ function formValidation() {
       isValid = false;
     }
     if (roles.val().length === 0) {
-      errorMsg.push("Please select at least one hobby.");
+      errorMsg.push("Please select at least one role.");
       isValid = false;
   } 
   }

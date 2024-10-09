@@ -480,7 +480,7 @@
         <cfelseif local.totalInserted gt 0>
             <cfset local.response = {"success": true, "message": "Excel Uploaded Successfully with new records."}>
         <cfelseif local.totalUpdated gt 0>
-            <cfset local.response = {"success": true, "message":  "Already Excel Uploaded  so update the records."}>
+            <cfset local.response = {"success": true, "message":  "Already Excel Uploaded  so plz update the records."}>
         </cfif>
         <cfset local.result  = serializeJSON(local.response)>
         <cfreturn local.result>

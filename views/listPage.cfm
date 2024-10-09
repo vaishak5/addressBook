@@ -156,7 +156,7 @@
                                                          <tr class="rowAlign">
                                                             <td colspan="3" class="itemsAlign">
                                                                <label for="roles" class="displayItems" >Roles</label>
-                                                               <select class="rolesSet" id="roles" multiple>
+                                                               <select class="rolesSet" id="roles" name="roles" multiple>
                                                                   <option value="Manager">Manager</option>
                                                                   <option value="Driver">Driver</option>
                                                                   <option value="Cleaner">Cleaner</option>

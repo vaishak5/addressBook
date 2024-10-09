@@ -38,8 +38,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <cfset contacts = EntityLoad("ORM_CREATE_CONTACT")>
                             <cfset rolesList = "">
+                            <cfset contacts = EntityLoad("ORM_CREATE_CONTACT",{userID=session.userID})>
                             <cfloop array="#contacts#" index="contact">
                                 <cfset roles=EntityLoad("rolesOrm")> 
                                 <cfloop array="#roles#" index="roles">
@@ -47,26 +47,23 @@
                                         <cfset rolesList = listAppend(rolesList, roles.getroles())>
                                     </cfif>
                                 </cfloop>
-                                <cfif session.userID EQ contact.getuserId()>
-                                    <tr class="tableRow">
-                                        <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile" width="20" height="20"></td>
-                                        <td class="">#contact.getfirstName()# #contact.getlarstName()#</td>
-                                        <td class="">#contact.getemailID()#</td>
-                                        <td class="">#contact.getphoneNumber()#</td>
-                                        <td class="">#contact.getgender()#</td>
-                                        <td class="">#contact.getdob()#</td>
-                                        <td class="">#contact.getaddressField()#,#contact.getstreet()#</td>
-                                        <td class="">#contact.getpincode()#</td>
-                                        <td class="">#rolesList#</td>
-                                    </tr>
-                                </cfif>
-                                <cfset rolesList = "">
+                                <tr class="tableRow">
+                                    <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile" width="20" height="20"></td>
+                                    <td class="">#contact.getfirstName()# #contact.getlarstName()#</td>
+                                    <td class="">#contact.getemailID()#</td>
+                                    <td class="">#contact.getphoneNumber()#</td>
+                                    <td class="">#contact.getgender()#</td>
+                                    <td class="">#contact.getdob()#</td>
+                                    <td class="">#contact.getaddressField()#,#contact.getstreet()#</td>
+                                    <td class="">#contact.getpincode()#</td>
+                                    <td class="">#rolesList#</td>
+                                </tr>
+                                <cfset rolesList = ""> 
                             </cfloop>
                         </tbody>
                     </table>
                 </div>
             </div>
-            
             <cfheader name="Content-Disposition" value="attachment; filename=list.pdf">
             <cfheader name="Content-Type" value="application/pdf">
         </cfhtmltopdf>
