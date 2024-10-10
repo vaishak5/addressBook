@@ -1,4 +1,17 @@
 $(document).ready(function () {
+
+    /*add roles in the input field*/
+    $.ajax({
+      url: "../models/addressBook.cfc?method=getRoles",
+      dataType: "json",
+      success: function(response) {
+        $('#rolesSet').empty().append(response);
+      },
+      error: function(xhr, status, error) {
+         console.error(error);
+      }
+  });  
+
   
   /*SIGN IN*/
   $("#submitClick").click(function () {
@@ -91,7 +104,7 @@ $(document).ready(function () {
     var phoneNum = $("#phoneNumber").val().trim();
     var email = $("#email").val().trim();
     var pincode = $("#pincode").val().trim();
-    var roles = $("#roles").val();
+    var roles = $("#rolesSet").val();
     var formData = new FormData();
     formData.append("hiddenContactId", hiddenContactId);
     formData.append("title", title);
@@ -105,7 +118,7 @@ $(document).ready(function () {
     formData.append("phoneNumber", phoneNum);
     formData.append("email", email);
     formData.append("pincode", pincode);
-    formData.append("roles", roles);
+    formData.append("rolesSet", roles);
     if (formValidation()) {
       $.ajax({
         type: "POST",
@@ -213,8 +226,8 @@ $(document).ready(function () {
           $("#email").val(selectDetails.email);
           $("#pincode").val(selectDetails.pincode);
           $(".editImg").attr("src", "../assets/" + selectDetails.myFile);
-          var rolesArray = selectDetails.roles;
-          $("#roles").val(rolesArray); 
+          var rolesArray = selectDetails.rolesSet;
+          $("#rolesSet").val(rolesArray); 
         },
         error: function (xhr, status, error) {
           console.error("Error:", status, error);
@@ -357,7 +370,7 @@ function formValidation() {
   var phoneNum = $("#phoneNumber").val().trim();
   var email = $("#email").val().trim();
   var pincode = $("#pincode").val().trim();
-  var roles=$("#roles");
+  var roles=$("#rolesSet");
   var isValid = true;
   var errorMsg = [];
   var specialCharRegex = /[<>]/;

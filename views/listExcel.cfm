@@ -15,12 +15,21 @@
             <cfset local.phone = contact.getphoneNumber()>
             <cfset local.pincode = contact.getpincode()>
             <cfset local.rolesList = "">
-            <cfset roles = EntityLoad("rolesOrm")>
-            <cfloop array="#roles#" index="roles">
-                <cfif contact.getcontactId() EQ roles.getcontactId()>
-                    <cfset local.rolesList = listAppend(local.rolesList, roles.getroles())>
-                </cfif>
+            <cfquery name="selectAddress" datasource="DESKTOP-8VHOQ47">
+                SELECT * FROM contactDetails
+                WHERE contactId = <cfqueryparam value="#contact.getcontactId()#" cfsqltype="cf_sql_integer">
+            </cfquery>
+            <cfquery name="selectroles" datasource="DESKTOP-8VHOQ47">
+                SELECT r.rolesList 
+                FROM roleList AS rl
+                INNER JOIN roles AS r ON rl.roleid = r.roleid
+                WHERE rl.contactId = <cfqueryparam value="#contact.getcontactId()#" cfsqltype="cf_sql_integer">
+            </cfquery>
+            <cfset local.rolesArray = []>
+            <cfloop query="selectroles">
+                <cfset arrayAppend(local.rolesArray, selectroles.rolesList)>
             </cfloop>
+            <cfset local.rolesList = arrayToList(local.rolesArray)>
             <cfset queryAddRow(excelSet ,1)>
             <cfset querySetCell(excelSet, "Title", local.title)>
             <cfset querySetCell(excelSet, "FirstName", local.firstName)>

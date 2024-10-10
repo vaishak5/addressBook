@@ -1,7 +1,6 @@
 
 <cfoutput>
-
-    <cfif session.login>
+<cfif session.login>
         <cfhtmltopdf>
             <div class="displayPdfDatas d-flex" id="pdfSet">
                 <div class="col-12">
@@ -41,12 +40,21 @@
                             <cfset rolesList = "">
                             <cfset contacts = EntityLoad("ORM_CREATE_CONTACT",{userID=session.userID})>
                             <cfloop array="#contacts#" index="contact">
-                                <cfset roles=EntityLoad("rolesOrm")> 
-                                <cfloop array="#roles#" index="roles">
-                                    <cfif contact.getcontactId() EQ roles.getcontactId()>
-                                        <cfset rolesList = listAppend(rolesList, roles.getroles())>
-                                    </cfif>
+                                <cfquery name="selectAddress" datasource="DESKTOP-8VHOQ47">
+                                    SELECT * FROM contactDetails
+                                    WHERE contactId = <cfqueryparam value="#contact.getcontactId()#" cfsqltype="cf_sql_integer">
+                                </cfquery>
+                                <cfquery name="selectroles" datasource="DESKTOP-8VHOQ47">
+                                    SELECT r.rolesList 
+                                    FROM roleList AS rl
+                                    INNER JOIN roles AS r ON rl.roleid = r.roleid
+                                    WHERE rl.contactId = <cfqueryparam value="#contact.getcontactId()#" cfsqltype="cf_sql_integer">
+                                </cfquery>
+                                <cfset local.rolesArray = []>
+                                <cfloop query="selectroles">
+                                    <cfset arrayAppend(local.rolesArray, "#rolesList#")>
                                 </cfloop>
+                                <cfset rolesList = arrayToList(local.rolesArray)>
                                 <tr class="tableRow">
                                     <td><img src="../assets/#contact.getprofilePic()#" class="profilePhoto" alt="profile" width="20" height="20"></td>
                                     <td class="">#contact.getfirstName()# #contact.getlarstName()#</td>
@@ -58,8 +66,8 @@
                                     <td class="">#contact.getpincode()#</td>
                                     <td class="">#rolesList#</td>
                                 </tr>
-                                <cfset rolesList = ""> 
-                            </cfloop>
+                                <cfset rolesList = "">
+                            </cfloop> 
                         </tbody>
                     </table>
                 </div>

@@ -13,5 +13,6 @@
     property name="emailID";
     property name="pincode";
     property name="userId";
+    property name="rolesList" fieldtype="one-to-many" cfc="rolesTableORM" fkcolumn="contactId";
 }
 </cfscript>
