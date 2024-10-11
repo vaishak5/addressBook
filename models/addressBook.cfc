@@ -104,7 +104,8 @@
         <cfargument name="phoneNumber" required="true">
         <cfargument name="email" required="true">
         <cfargument name="pincode" required="true">
-        <cfargument name="rolesSet"> 
+        <cfargument name="rolesSet">
+        <cfset local.rolesArray = listToArray(arguments.rolesSet)>
         <cfset var emailUnique = isEmailUnique(arguments.email,arguments.hiddenContactId)>
         <cfif arguments.hiddenContactId GT 0>
             <!---Update records(edit set)--->
@@ -128,7 +129,6 @@
                     WHERE contactId = <cfqueryparam value="#arguments.hiddenContactId#" cfsqltype="cf_sql_integer">
                 </cfquery>
                  <!--- Update roles directly --->
-                <cfset local.rolesArray = listToArray(arguments.rolesSet)>
                 <cfquery name="deleteroles" datasource="DESKTOP-8VHOQ47">
                     delete from roleList WHERE contactId = <cfqueryparam value="#arguments.hiddenContactId#" cfsqltype="cf_sql_integer">
                 </cfquery>
@@ -169,20 +169,13 @@
                         <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
                     )
                 </cfquery>
-                <!---select emailid,userid for inserting  roles--->
-                <cfquery name="selectNewContact" datasource="DESKTOP-8VHOQ47">
-                    SELECT * FROM contactDetails 
-                    WHERE emailID = <cfqueryparam value="#arguments.email#" cfsqltype="cf_sql_varchar"> 
-                    AND userId = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
-                </cfquery>
-                
+                <cfset local.newContactId = newContactResult.generatedKey>           
                 <!--- Insert roles --->
-                <cfset local.rolesArray = listToArray(arguments.rolesSet)>
                 <cfloop array="#local.rolesArray#" index="setroles">
                     <cfquery name="addroles" datasource="DESKTOP-8VHOQ47">
                         INSERT INTO roleList (contactId, roleid)
                         VALUES (
-                            <cfqueryparam value="#selectNewContact.contactId#" cfsqltype="cf_sql_varchar">,
+                            <cfqueryparam value="#local.newContactId#" cfsqltype="cf_sql_varchar">,
                             <cfqueryparam value="#setroles#" cfsqltype="cf_sql_integer">
                         )
                     </cfquery>
@@ -214,37 +207,29 @@
     </cffunction>
 
     <!---Viewing Particular Row(View Datas)--->
-    <cffunction name="viewDatas" access="remote" returnformat="plain">
+    <cffunction name="viewDatas" access="remote" returnformat="JSON">
         <cfargument name="contactId" type="numeric" required="true">
-        <cfquery name="contactSet" datasource="DESKTOP-8VHOQ47">
-            SELECT contactId,title,firstName,larstName,gender,dob,profilePic,addressField,street,phoneNumber,emailID,pincode
-            FROM contactDetails
-            WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">
+        <cfquery name="contactSet" datasource="DESKTOP-8VHOQ47" result="newContact">
+            SELECT c.contactId, c.title, c.firstName, c.larstName, c.gender, c.dob, c.profilePic, c.addressField, c.street, 
+            c.phoneNumber, c.emailID, c.pincode, r.rolesList
+            FROM contactDetails AS c
+            LEFT JOIN roleList AS rl ON c.contactId = rl.contactId
+            LEFT JOIN roles AS r ON r.roleid = rl.roleid
+            WHERE c.contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">
         </cfquery>
         <cfset local.contact = {}>
         <cfif contactSet.recordCount GT 0>
             <cfset local.contact.fullName = contactSet.title & " " & contactSet.firstName & " " & contactSet.larstName>
             <cfset local.contact.gender = contactSet.gender>
             <cfset local.contact.dob = contactSet.dob>
-            <cfset local.contact.fullAddress = contactSet.addressField & ","&contactSet.street>
-            <cfset local.contact.phoneNumber=contactSet.phoneNumber>
-            <cfset local.contact.email=contactSet.emailID>
-            <cfset local.contact.pincode=contactSet.pincode>
-            <cfset local.contact.profilePic=contactSet.profilePic>
-            <cfquery name="selectAddress" datasource="DESKTOP-8VHOQ47">
-                SELECT * FROM contactDetails
-                WHERE contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">
-            </cfquery>
-             <cfquery name="selectroles" datasource="DESKTOP-8VHOQ47">
-                SELECT r.rolesList 
-                    FROM roles AS r
-                    INNER JOIN roleList AS rl ON rl.roleid = r.roleid
-                    WHERE rl.contactId = <cfqueryparam value="#arguments.contactId#" cfsqltype="cf_sql_integer">
-            </cfquery>
-
+            <cfset local.contact.fullAddress = contactSet.addressField & ", " & contactSet.street>
+            <cfset local.contact.phoneNumber = contactSet.phoneNumber>
+            <cfset local.contact.email = contactSet.emailID>
+            <cfset local.contact.pincode = contactSet.pincode>
+            <cfset local.contact.profilePic = contactSet.profilePic>
             <cfset local.rolesArray = []>
-            <cfloop query="selectroles">
-                <cfset arrayAppend(local.rolesArray, selectroles.rolesList)>
+            <cfloop query="contactSet">
+                <cfset arrayAppend(local.rolesArray, contactSet.rolesList)>
             </cfloop>
             <cfset local.contact.roles = local.rolesArray>
         </cfif>
@@ -289,16 +274,7 @@
         <cfset serializedContact = serializeJSON(local.result)>
         <cfreturn serializedContact>
     </cffunction>
-    <!---Log out--->
-    <cffunction  name="doLogout" returntype="any" access="remote">
-        <cfset session.login=false>
-        <cfset session.fullName = "">
-        <cfset session.imgProfile = "">
-        <cfset session.userId = "">
-        <cfset session.sso=false>
-        <cflocation url="../loginPage.cfm" addtoken="false">
-    </cffunction>
-
+    
     <!---SSO--->
     <cffunction name="googleLogin" access="remote" returnFormat="PLAIN">
         <cfargument name="emailID" required="true">
@@ -454,7 +430,7 @@
                 </cfloop>
                 <cfset local.totalUpdated = local.totalUpdated + 1>
             <cfelse>
-                <cfquery name="insertQuery" datasource="DESKTOP-8VHOQ47">
+                <cfquery name="insertQuery" result="newContactResult" datasource="DESKTOP-8VHOQ47">
                     INSERT INTO contactDetails (title, firstName, larstName, gender, dob, profilePic, addressField, street, phoneNumber, emailID, pincode, userId)
                     VALUES (
                         <cfqueryparam value="#(local.recordData.title)#" cfsqltype="cf_sql_varchar">,
@@ -472,13 +448,8 @@
                         
                     )
                 </cfquery>
-                <!---select emailid,userid for insert roles--->
                 <cfset local.rolesArray = listToArray(local.recordData.roles)>
-                <cfquery name="selectNewContact" datasource="DESKTOP-8VHOQ47">
-                    SELECT * FROM contactDetails 
-                    WHERE emailID = <cfqueryparam value="#local.recordData.emailID#" cfsqltype="cf_sql_varchar"> 
-                    AND userId = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
-                </cfquery>
+                <cfset local.newContactId = newContactResult.generatedKey>
                 <!---Insert roles--->
                 <cfloop array="#local.rolesArray#" index="rolesSet">
                     <cfset local.roleId = "">
@@ -492,7 +463,7 @@
                         <cfquery name="insertRoleId" datasource="DESKTOP-8VHOQ47">
                             INSERT INTO roleList(contactId, roleid)
                             VALUES(
-                                <cfqueryparam value="#selectNewContact.contactId#" cfsqltype="cf_sql_varchar">,
+                                <cfqueryparam value="#local.newContactId#" cfsqltype="cf_sql_varchar">,
                                 <cfqueryparam value="#local.roleId#" cfsqltype="cf_sql_varchar">
                                 
                             )

@@ -179,7 +179,6 @@ $(document).ready(function () {
       },
       success: function (response) {
         var viewDetails = JSON.parse(response);
-        console.log(viewDetails);
         $("#fullName").html(viewDetails.FULLNAME);
         $("#genders").html(viewDetails.GENDER);
         $("#dobSecond").html(viewDetails.DOB);
